@@ -1,0 +1,72 @@
+- var projconfig = JSON.parse(JSON.stringify(config)); // <- Executed by pug, will remove private config from public web javascript context
+- var livereloadPort = projconfig.private.livereloadPort;
+- delete projconfig.private; // <- Executed by pug, will remove private config from public web javascript context
+- var isDev = projconfig.env == 'dev';
+- var depSource = '../node_modules/libx.fuser/dist/';
+
+doctype html
+html(ng-controller='layoutEx')
+	head
+		meta(charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
+		//- meta(name="fragment",content="!")
+
+		base(href='/')
+		title(ng-bind='layout.title') My App
+		
+		link(rel='stylesheet', type='text/css', href=depSource + '/framework/bundle.styles.css')
+
+		// build:css bundle/bundle.css
+		link(rel='stylesheet', type='text/css', href='resources/styles/style.min.css')
+		// endbuild
+
+		script.
+			window.projconfig = !{JSON.stringify(projconfig)};
+
+		//script.
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-xxxxxxxxx-x', 'auto');
+			ga('send', 'pageview');
+
+	body.site-font
+		//(ng-cloak)
+		//-- Content --/
+		include _content.pug
+
+		script(src=depSource + 'framework/bundle.jquery.js')
+		script(src=depSource + 'framework/bundle.angular.js')
+		script(src=depSource + 'framework/bundle.firebase.js')
+		//- script(src=depSource + 'scripts/libx.essentials.browser.js')
+		
+		// build:jsBundle bundle/browserified.js
+		script(src='resources/scripts/libx.js')
+		//script(src='resources/scripts/api-modules.js')
+		// endbuild
+
+		// build:jsBundle bundle/bundle.js
+		script(src='resources/scripts/app.js')
+		script(src='resources/scripts/app-routes.js')
+		script(src='resources/scripts/app-config.js')
+		script(src='views/views-templates.js')
+		//- script(src='/resources/components/my-loader/controller.js')
+		//- script(src='/resources/components/components-templates.js')
+		// endbuild
+
+		// External dependencies:
+		script(src='https://cdn.jsdelivr.net/npm/jdenticon@2.1.1')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js')
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data-2012-2022.min.js')
+
+		script.
+			if (window._libx_angular_boot == null) libx.browser.angular.bootstrap();
+
+	// Live-reload:
+	script.
+		if (projconfig.env == 'dev')
+			document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + 
+			':#{livereloadPort}/livereload.js?snipver=1"></' + 'script>');
+	

@@ -1,0 +1,254 @@
+style.
+	.vote-option { width:40px; height:60px; background:yellow; }
+	.vote-option.selected { background:red; }
+	.vote-option.enabled { background:red; }
+	.content-page, .view-frame { min-height:100%; }
+	.box-voting.locked .vote-option { opacity:0.5; }
+	.box-panels-left { border-right:1px solid #ccc; }
+	.box-panels-right { padding-left:20px; }
+	@media screen and (max-width: 599px){ 	}
+
+.inlineController.content-page(ng-controller="inlineController", layout="column", layout-align="center center",ng-cloak).padding10
+	
+	.overlay(ng-show="!isReady",layout="column",layout-align="center center")
+		.spinner
+			svg(viewBox='0 0 66 66')
+				circle.length(fill='none', stroke-width='8', stroke-linecap='round', cx='33', cy='33', r='28')
+			svg(viewBox='0 0 66 66')
+				circle(fill='none', stroke-width='8', stroke-linecap='round', cx='33', cy='33', r='28')
+			svg(viewBox='0 0 66 66')
+				circle(fill='none', stroke-width='8', stroke-linecap='round', cx='33', cy='33', r='28')
+			svg(viewBox='0 0 66 66')
+				circle(fill='none', stroke-width='8', stroke-linecap='round', cx='33', cy='33', r='28')
+
+
+	//- h1 Main
+	br.margin20
+
+
+	.box-panels(layout="row",layout-align="space-between start").fill
+		.box-panels-left(flex)
+			.box-voting(layout="row",layout-align="space-between center",ng-class="{ 'locked' : !timer.isActive() }").fill.text-center
+				.vote-category(flex,ng-repeat="cat in table.categories") {{ cat }}
+					.vote-option.centered.margin5(ng-repeat="opt in table.options",
+						layout="row",layout-align="center center",ng-click="onOptionClick(cat,opt)",ng-class="{'selected' : myVote.vote[cat] == opt }") {{ opt }}
+
+		.box-panels-right(flex=20)
+			h3 Table Name: 
+				div.bold {{ table.tableName }}
+			//- md-input-container.fill
+			//- 	label Table Name:
+			//- 	input(ng-model='table.tableName',ng-change="table.save()",ng-model-options="{ debounce: 500 }",ng-readonly="!table.isOwner()")
+			
+			md-input-container(ng-show="editCaption && table.isOwner()").fill
+				label Caption:
+				//- input(ng-model='table.caption',ng-change="table.save()",ng-model-options="{ debounce: 500 }",ng-readonly="!table.isOwner()")
+				textarea(ng-model='table.caption',ng-change="table.save()",ng-model-options="{ debounce: 500 }",ng-disabled="!table.isOwner()",ng-blur="editCaption = false",
+					autofocus=".editCaption",autofocus-select,rows="2",style="min-height:80px;")
+			h3.editCaption(ng-show="!editCaption",ng-click="editCaption = true && table.isOwner()") Caption: 
+				div.bold {{ table.caption }}
+
+			h3.margin0 Who's Here:
+			div.small.fill
+				div(ng-repeat="(id, email) in table.participants",layout="row",layout-align="start center") 
+					//.avatar.avatar-small(style="margin-left:0;").margin-right10
+						img(ng-src='https://avatars.dicebear.com/v2/jdenticon/{{email}}.svg')
+					div(layout="column")
+						span {{ email + (!$last ? ', ' : '') }} 
+						span.ultra-small(ng-if="table.owner == id") (owner)
+			
+			h3.margin-bottom0.margin-top20 Timer:
+			div {{ timer.cur || '-- (' + table.timerMaxSec + ')s' }}
+
+	.box-manage(layout="row",ng-if="table.isOwner()").margin-top20.fill
+		//- .my-button-bare(ng-click="onDoneClick()").bg-green.margin5 Done!
+		.md-button.md-raised(ng-click="onStartClick()").bg-blue.margin5 Start
+		.md-button.md-raised(ng-click="onStopClick()").bg-orange.margin5 Stop
+		.md-button.md-raised(ng-click="onResetClick()").bg-red.margin5 Restart
+
+	.box-results.fill.margin-top40(ng-show="results")
+		div(layout="row").fill.border-bottom(style="border-bottom:1px solid #ddd;").margin-bottom5
+			div(flex=30) Results:
+			.vote-category(flex=10,ng-repeat="cat in table.categories").text-center {{ cat }}
+
+		div(ng-repeat="(uid, res) in results",layout="row",layout-align="start center").fill.margin-bottom5
+			div(flex=30) {{ table.participants[uid] }}
+			.vote-category(flex=10,ng-repeat="cat in table.categories") 
+				.vote-option.centered(layout="row",layout-align="center center") {{ res[cat] }}
+
+	br.margin40
+
+	.box-settings(layout="row",layout-align="start start").fill.padding20.margin-top40
+		.btn-settings.btn-icon.fg-black.margin-right20(ng-click="isShowSettings = !isShowSettings") 
+			i.md-icons settings
+		.box-settings-edit(ng-show="isShowSettings").fill
+			md-input-container.box-config.md-block.fill.hide-validation-error
+				label Config:
+				textarea(ng-model='table_editable',rows='10',ng-model-options="{ debounce: 500 }",ng-change="table.onEditConfig(this, $event)",ng-readonly="!table.isOwner()",md-detect-hidden)
+			.error.small(ng-show="table_parseError") Error parsing config, exception: {{ table_parseError }}
+
+
+
+script.
+	libx.browser.angular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
+		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
+
+		// Table config:
+		$scope.table = {};
+		$scope.table.owner = null;
+		$scope.table.tableName = null;
+		$scope.table.caption = "";
+		$scope.table.timerMaxSec = 15;
+		$scope.table.endTime = null;
+		$scope.table.categories = [ 'D', 'R', 'F', 'I' ];
+		$scope.table.options = [ '0', '1', '2', '3' ];
+		$scope.table.participants = [ ];
+		
+		$scope.table.isOwner = ()=> $rootScope.user != null && $scope.table.owner == $rootScope.user.id;
+		$scope.table.get = ()=> {
+			var p = libx.newPromise();
+			libx.modules.firebase.listen(`/tables/${$routeParams.tableId}`, (data)=>{
+				libx.log.v('table:get: table update! ', data)
+				$scope.table = libx.extend($scope.table, data);
+
+				$scope.table_editable = libx.jsonify($scope.table);
+				
+				if (!$scope.timer.isPast()) $scope.timer.start();
+				else $scope.table.getResults();
+				//- $scope.treattable(data);
+				$scope.isReady = true;
+				p.resolve($scope.table);
+				$scope.safeApply();
+			})
+			return p;
+		};
+		$scope.table.save = libx.throttle(()=> {
+			libx.modules.firebase.update(`tables/${$scope.table._entity.id}`, $scope.table);
+		}, 500);
+		$scope.table.getResults = async ()=> {
+			var data = await libx.modules.firebase.get(`/votes/${$scope.table._entity.id}/`);
+			libx.log.v('table:getResults: ', data)
+			$scope.results = data;
+			$scope.safeApply();
+		};
+		$scope.table.resetVotes = async ()=>{
+			await libx.modules.firebase.set(`votes/${$scope.table._entity.id}`, {}, true);
+			await $scope.table.getResults()
+		};
+		$scope.table.onEditConfig = ()=>{
+			try {
+				$scope.table = libx.extend($scope.table, JSON.parse($scope.table_editable));
+				$scope.table_parseError = null;
+				$scope.table.save()
+				libx.log.i('table.onEditConfig')
+			} catch (ex) {
+				$scope.table_parseError = ex.message;
+				libx.log.error('Failed to parse config! ex:', ex)
+			}
+		}
+		$scope.table.setPresence = ()=>{;
+			libx.modules.firebase.onPresent(`/table-presence/${$scope.table._entity.id}/${$rootScope.user.id}`, $rootScope.user.email);
+			libx.modules.firebase.listen(`/table-presence/${$scope.table._entity.id}`, data=>{
+				$scope.table.participants = data; //_.toPairs(data);
+				$scope.safeApply();
+			});
+		}
+
+
+		// My personal vote:
+		$scope.myVote = {};
+		$scope.myVote.vote = {};
+		$scope.myVote.get = ()=> {
+			var p = libx.newPromise();
+			libx.modules.firebase.listen(`votes/${$scope.table._entity.id}/${$rootScope.user.id}`, async (data)=>{
+				libx.log.v('myVote:get: vote update! ', data)
+				$scope.myVote.vote = data || {};
+				
+				if (data == null) await $scope.table.getResults();
+				p.resolve($scope.myVote.vote);
+				$scope.safeApply();
+			})
+			return p;
+		};
+		$scope.myVote.save = libx.throttle(()=> {
+			libx.modules.firebase.set(`votes/${$scope.table._entity.id}/${$rootScope.user.id}`, $scope.myVote.vote, true);
+		}, 500);
+
+
+		// timer
+		$scope.timer = {};
+		$scope.timer.handler = null;
+		$scope.timer.isPast = ()=> $scope.table.endTime <= new Date().getTime();
+		$scope.timer.isActive = ()=> !$scope.timer.isPast();
+		$scope.timer.start = ()=>{
+			libx.log.v('timer.start: isPast:', $scope.timer.isPast);
+			if ($scope.timer.isPast()) $scope.table.endTime = new Date().addHours($scope.table.timerMaxSec/60/60).getTime();
+			$scope.timer.calcTimer();
+
+			if ($scope.table.isOwner()) $scope.table.save();
+
+			$interval.cancel($scope.timer.handler);
+			$scope.timer.handler = $interval(()=> {
+				$scope.timer.calcTimer();
+				if ($scope.timer.cur <= 0) $scope.timer.stop();
+			}, 1000);
+		};
+		$scope.timer.stop = ()=>{
+			$interval.cancel($scope.timer.handler);
+			$scope.table.endTime = new Date().getTime();
+			$scope.timer.cur = 0;
+			if ($scope.table.isOwner()) $scope.table.save();
+			$scope.table.getResults();
+		};
+		$scope.timer.calcTimer = ()=>{
+			$scope.timer.cur = Math.round(($scope.table.endTime - (new Date()).getTime())/1000)
+		};
+
+		// Events:
+		$scope.onResetClick = async ()=> {
+			libx.browser.angular.showPrompt('Next item description: ', async (res)=> {
+				if (res == null) return;
+				$scope.table.caption = res;
+				$scope.table.save();
+				$scope.table.resetVotes();
+			}, { initialValue: $scope.table.caption });
+		}
+		$scope.onStartClick = ()=> {
+			$scope.table.resetVotes();
+			$scope.timer.start();
+		}
+		$scope.onStopClick = ()=> {
+			$scope.timer.stop();
+		}
+		$scope.onOptionClick = (cat, opt)=> {
+			libx.log.v('onOptionClick:', cat, opt)
+			if (!$scope.timer.isActive()) return;
+			$scope.myVote.vote[cat] = opt;
+			$scope.myVote.save();
+		}
+
+		// Init:
+		$scope.e = $rootScope.$on('$viewContentLoaded', ()=> {
+			libx.log.d('viewContentLoaded');
+			$scope.table.get().then(()=>{
+				if ($rootScope.user == null) return;
+				$scope.myVote.get().then(()=>{
+					$scope.table.setPresence();
+				});
+				$scope.table.getResults();
+			})
+		});
+		//- $rootScope.$on('user-ready', async ()=> {
+		//- });
+
+		$scope.$on('$destroy', function () {
+			libx.log.i("Unregistering listener");
+			$scope.e();
+		});
+
+
+		// Remove participant on exit table:
+		$rootScope.$on('$locationChangeStart', (event, next, current) => {
+			libx.modules.firebase.set(`/table-presence/${$scope.table._entity.id}/${$rootScope.user.id}`, null);			
+		});
+	});

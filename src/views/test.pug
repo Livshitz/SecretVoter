@@ -1,0 +1,30 @@
+style.
+	@media screen and (max-width: 599px){ 	}
+
+.inlineController.content-page(ng-controller="inlineController", layout="column", layout-align="start start").padding10
+	
+	.md-button button
+
+	.my-button-bare button base
+	.my-button-bordered button bordered
+	.my-button-attention button attention
+
+	.btn-icon.huge
+		.md-icons.fg-white assignment_turned_in
+	.btn-icon.round.bg-myPrimary.md-icons close
+
+	div(ng-include="'template-example'").margin40 Should be replaced
+
+	my-widget(text="asd")
+		a(href="#")
+			h1.bold This is component's content
+
+	script(type="text/ng-template",id="template-example")
+		div This is an inline template
+
+script.
+	libx.browser.angular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
+		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
+
+
+	});
