@@ -13,8 +13,8 @@
     "buffer": "^5.2.1",
     "connect-gzip": "^0.1.6",
     "firebase-admin": "^7.1.0",
-    "libx.fuser": "^0.0.59",
-    "libx.js": "^0.0.63",
+    "libx.fuser": "^0.0.60",
+    "libx.js": "^0.0.64",
     "ng-inline-edit": "^0.7.0"
   },
   "devDependencies": {}
