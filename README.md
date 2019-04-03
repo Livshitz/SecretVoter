@@ -49,18 +49,18 @@ libx.fuser: [![npm](https://img.shields.io/npm/v/libx.fuser.svg?maxAge=1000)](ht
 
 
 ## Running Locally:
-Run local server: `node fuser-client.js --secret=<?>`.
+Run local server: `node fuser.js --secret=<?>`.
 
-With api (local Firebase Cloud Functions): `node fuser-client.js --secret=<?> --api`.
+With api (local Firebase Cloud Functions): `node fuser.js --secret=<?> --api`.
 
 
 ## Useful Commands:
-* `node fuser-client.js` - Build & run local frontend server with watch and hot-reload
-* `node fuser-client.js --build` - Build only
-* `node fuser-client.js --api` - Build & run local frontend server with local backend (cloud functions)
+* `node fuser.js` - Build & run local frontend server with watch and hot-reload
+* `node fuser.js --build` - Build only
+* `node fuser.js --api` - Build & run local frontend server with local backend (cloud functions)
 * `node node_modules/libx.fuser --api-run` - Run local backend only
-* `node fuser-client.js --env=prod` - Run local frontend server with production configuration (bundling & compression enabled)
-* `node fuser-client.js --api-deploy` - Deploy whole api backend
+* `node fuser.js --env=prod` - Run local frontend server with production configuration (bundling & compression enabled)
+* `node fuser.js --api-deploy` - Deploy whole api backend
 * `node node_modules/libx.fuser --secrets-lock` - Encrypt your secrets file
 * `node node_modules/libx.fuser --secrets-unlock` - Decrypt your secrets file
 * `firebase deploy -P <project> --only functions:'<functionsGroupName>.<functionName>' --token <token>` - Deploy only one specific Cloud function from your api
