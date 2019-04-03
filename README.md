@@ -1,4 +1,4 @@
-# BundularJS 
+# Secret-Voter 
 
 
 Build: [![Netlify Status](https://api.netlify.com/api/v1/badges/8412fb7e-73b4-4ff4-9bf5-983e71527a27/deploy-status)](https://app.netlify.com/sites/bundular-js/deploys)
@@ -14,7 +14,7 @@ libx.fuser: [![npm](https://img.shields.io/npm/v/libx.fuser.svg?maxAge=1000)](ht
 
 <!-- [![node](https://img.shields.io/node/v/libx.js.svg?maxAge=1000)](https://www.npmjs.com/package/libx.js) -->
 
-> BundularJS is .
+> Secret-Voter is a simple webapp demonstrating the use of [BundularJS](https://github.com/Livshitz/BundularJS).
 
 ## Screenshot:
 ![image](https://user-images.githubusercontent.com/246724/55460493-cb269880-55fa-11e9-8fa3-24422e4d3fea.png)
