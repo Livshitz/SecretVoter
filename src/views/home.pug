@@ -7,13 +7,12 @@ style.
 		ol
 			li(ng-repeat="table in myTables")
 				a(href="/table/{{table.id}}") {{table.tableName}}
+		md-button.md-raised.md-primary(ng-click="showPrompt()") New Table
 
 	div(ng-show="!user",layout="row",layout-align="center center").fill
 		h3 Please Login
 
-	md-button.md-raised.md-primary(ng-click="showPrompt()") New Table
 	//- .my-button-bare(ng-click="onDoneClick()").bg-green.margin5 Done!
-
 
 script.
 	libx.browser.angular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
