@@ -8,7 +8,7 @@ style.
 			li(ng-repeat="table in myTables")
 				a(href="/table/{{table.id}}") {{table.tableName}}
 
-	div(ng-hide="user",layout="row",layout-align="center center").fill
+	div(ng-show="!user",layout="row",layout-align="center center").fill
 		h3 Please Login
 
 	md-button.md-raised.md-primary(ng-click="showPrompt()") New Table
