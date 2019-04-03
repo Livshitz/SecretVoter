@@ -1,11 +1,15 @@
 style.
 	@media screen and (max-width: 599px){ 	}
 
-.inlineController.content-page(ng-controller="inlineController", layout="column", layout-align="start start").padding10
+.inlineController.content-page(ng-controller="inlineController", layout="column", layout-align="start start",ng-cloak).padding10
 	
-	ol
-		li(ng-repeat="table in myTables")
-			a(href="/table/{{table.id}}") {{table.tableName}}
+	div(ng-show="user").fill
+		ol
+			li(ng-repeat="table in myTables")
+				a(href="/table/{{table.id}}") {{table.tableName}}
+
+	div(ng-hide="user",layout="row",layout-align="center center").fill
+		h3 Please Login
 
 	md-button.md-raised.md-primary(ng-click="showPrompt()") New Table
 	//- .my-button-bare(ng-click="onDoneClick()").bg-green.margin5 Done!
