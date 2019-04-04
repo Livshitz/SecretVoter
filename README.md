@@ -6,11 +6,11 @@ Build: [![Netlify Status](https://api.netlify.com/api/v1/badges/8412fb7e-73b4-4f
 
 libx.js: [![npm](https://img.shields.io/npm/v/libx.js.svg?maxAge=1000)](https://www.npmjs.com/package/libx.js)
 <!-- [![CircleCI](https://circleci.com/gh/Livshitz/libx.js.svg?style=svg&circle-token=c8c703eeb260071d345a59ab2fa0f9c461c341bd)](https://circleci.com/gh/Livshitz/libx.js) 
-[![CircleCI](https://circleci.com/gh/Livshitz/bundlerjs/tree/master.svg?style=shield)](https://circleci.com/gh/Livshitz/bundlerjs)
+[![CircleCI](https://circleci.com/gh/Livshitz/bundularjs/tree/master.svg?style=shield)](https://circleci.com/gh/Livshitz/bundularjs)
 -->
 
-bundlerjs: [![npm](https://img.shields.io/npm/v/bundlerjs.svg?maxAge=1000)](https://www.npmjs.com/package/bundlerjs) 
-<!-- [![CircleCI](https://circleci.com/gh/Livshitz/bundlerjs.svg?style=svg&circle-token=a963d20d503917ef680f1b22b50744f0f93cfb22)](https://circleci.com/gh/Livshitz/bundlerjs) -->
+bundularjs: [![npm](https://img.shields.io/npm/v/bundularjs.svg?maxAge=1000)](https://www.npmjs.com/package/bundularjs) 
+<!-- [![CircleCI](https://circleci.com/gh/Livshitz/bundularjs.svg?style=svg&circle-token=a963d20d503917ef680f1b22b50744f0f93cfb22)](https://circleci.com/gh/Livshitz/bundularjs) -->
 
 <!-- [![node](https://img.shields.io/node/v/libx.js.svg?maxAge=1000)](https://www.npmjs.com/package/libx.js) -->
 
@@ -32,7 +32,7 @@ bundlerjs: [![npm](https://img.shields.io/npm/v/bundlerjs.svg?maxAge=1000)](http
 * [__Firebase__](https://firebase.google.com) - Database, auth, Cloud Functions
 * [__Netlify__](https://netlify.com) - CI/CD, hosting, pre-rendering, routing, DNS management, SSL
 * __libx.js__ ([npm](https://www.npmjs.com/package/libx.js)) - Swiss army knife full of useful modules and helpers
-* __bundlerjs__ ([npm](https://www.npmjs.com/package/bundlerjs)) - A prebuilt framework of script bundles, styles and configurations. Also serves as bundler (like Webpack), and dev env server.
+* __bundularjs__ ([npm](https://www.npmjs.com/package/bundularjs)) - A prebuilt framework of script bundles, styles and configurations. Also serves as bundler (like Webpack), and dev env server.
 
 
 ## Initial Setup:
@@ -45,7 +45,7 @@ bundlerjs: [![npm](https://img.shields.io/npm/v/bundlerjs.svg?maxAge=1000)](http
    3. `cp src/project-secrets-empty.json src/project-secrets.json`
    4. Get your service account ('private key'), copy it's content to the file `src/project-secrets.json`
    5. Create a private passphrase to secure your secrets file `export FUSER_SECRET_KEY=<your-secret>`
-   6. Lock your secrets file `node node_modules/bundlerjs --secrets-lock`
+   6. Lock your secrets file `node node_modules/bundularjs --secrets-lock`
    7. Edit `src/project.json` file with relevant paths to your new Firebase project
 5. Netlify (optional):
    1. Create new project and point to your cloned repo
@@ -61,11 +61,11 @@ With api (local Firebase Cloud Functions): `node fuser.js --secret=<?> --api`.
 * `node fuser.js` - Build & run local frontend server with watch and hot-reload
 * `node fuser.js --build` - Build only
 * `node fuser.js --api` - Build & run local frontend server with local backend (cloud functions)
-* `node node_modules/bundlerjs --api-run` - Run local backend only
+* `node node_modules/bundularjs --api-run` - Run local backend only
 * `node fuser.js --env=prod` - Run local frontend server with production configuration (bundling & compression enabled)
 * `node fuser.js --api-deploy` - Deploy whole api backend
-* `node node_modules/bundlerjs --secrets-lock` - Encrypt your secrets file
-* `node node_modules/bundlerjs --secrets-unlock` - Decrypt your secrets file
+* `node node_modules/bundularjs --secrets-lock` - Encrypt your secrets file
+* `node node_modules/bundularjs --secrets-unlock` - Decrypt your secrets file
 * `firebase deploy -P <project> --only functions:'<functionsGroupName>.<functionName>' --token <token>` - Deploy only one specific Cloud function from your api
 
 
