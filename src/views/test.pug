@@ -28,8 +28,10 @@ script.
 	app.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
 		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
 
+		app.layout.title = 'test';
+		$scope.safeApply();
 		$scope.test = await libx.di.get('firebase').get('/test/prerender');
 		app.layout.title = $scope.test;
-		$scope.safeApply()
+		$scope.safeApply();
 		
 	});
