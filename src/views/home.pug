@@ -15,27 +15,27 @@ style.
 	//- .my-button-bare(ng-click="onDoneClick()").bg-green.margin5 Done!
 
 script.
-	libx.browser.angular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
+	libx.angular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
 		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
 
-		//- var key = await libx.modules.firebase.push('/xplanner/tables', { tableName: tableName, owner: $rootScope.user.id });
+		//- var key = await app.firebase.push('/xplanner/tables', { tableName: tableName, owner: $rootScope.user.id });
 
 		$scope.createTable = async (tableName)=>{
-			var key = await libx.modules.firebase.push('/tables', { tableName: tableName, owner: $rootScope.user.id, endTime: 0 });
+			var key = await app.firebase.push('/tables', { tableName: tableName, owner: $rootScope.user.id, endTime: 0 });
 			return key;
 		}
 
 		$scope.getMyTables = async ()=>{
-			$scope.myTables = await libx.modules.firebase.filter('/tables/', 'owner', $rootScope.user.id);
+			$scope.myTables = await app.firebase.filter('/tables/', 'owner', $rootScope.user.id);
 			$scope.safeApply();
 		}
 
 		$scope.showPrompt = ()=> {
-			libx.browser.angular.showPrompt('content', async (res)=> {
+			libx.angular.showPrompt('content', async (res)=> {
 				if (res == null) return;
 
 				var tableId = await $scope.createTable(res);
-				libx.browser.angular.navigate(`/table/${tableId}`)
+				libx.angular.navigate(`/table/${tableId}`)
 			});
 		};
 

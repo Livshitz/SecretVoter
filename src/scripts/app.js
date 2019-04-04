@@ -5,6 +5,8 @@
 	window.app = {};
 	window.prerenderReady = false;
 
+	libx.angular = libx.di.get('angular');
+
 	angular.module('templates', []);
 	app = angular.module('myApp', ['libx.angular', 'ngAnimate', 'ngMaterial', 'ngCookies', 'ngResource', 'ngRoute', 'templates']);
 	// angular-google-analytics
@@ -19,13 +21,20 @@
 	app.layout.title = 'BundularJS';
 	app.getTitle = ()=> 'asd';
 
-	libx.modules.firebase.firebasePathPrefix = '/secret-voter';
+	app.firebase = libx.di.get('firebase');
+	app.firebase.firebasePathPrefix = '/secret-voter';
+
+	app.userManager = libx.di.get('userManager');
+
+	app.config(()=> {
+		app.lazy = libx.angular.lazy;
+	});
 
 	app.run( ($rootScope, utils, $window) => {
 		libx.log.debug('app:run')
 
-		libx.modules.firebase.isConnected(()=> {
-			libx.browser.angular.broadcast('fib-ready');
+		app.firebase.isConnected(()=> {
+			libx.angular.broadcast('fib-ready');
 		});
 
 

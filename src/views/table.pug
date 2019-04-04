@@ -90,7 +90,7 @@ style.
 
 
 script.
-	libx.browser.angular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
+	app.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
 		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
 
 		// Table config:
@@ -107,7 +107,7 @@ script.
 		$scope.table.isOwner = ()=> $rootScope.user != null && $scope.table.owner == $rootScope.user.id;
 		$scope.table.get = ()=> {
 			var p = libx.newPromise();
-			libx.modules.firebase.listen(`/tables/${$routeParams.tableId}`, (data)=>{
+			app.firebase.listen(`/tables/${$routeParams.tableId}`, (data)=>{
 				libx.log.v('table:get: table update! ', data)
 				$scope.table = libx.extend($scope.table, data);
 
@@ -123,16 +123,16 @@ script.
 			return p;
 		};
 		$scope.table.save = libx.throttle(()=> {
-			libx.modules.firebase.update(`tables/${$scope.table._entity.id}`, $scope.table);
+			app.firebase.update(`tables/${$scope.table._entity.id}`, $scope.table);
 		}, 500);
 		$scope.table.getResults = async ()=> {
-			var data = await libx.modules.firebase.get(`/votes/${$scope.table._entity.id}/`);
+			var data = await app.firebase.get(`/votes/${$scope.table._entity.id}/`);
 			libx.log.v('table:getResults: ', data)
 			$scope.results = data;
 			$scope.safeApply();
 		};
 		$scope.table.resetVotes = async ()=>{
-			await libx.modules.firebase.set(`votes/${$scope.table._entity.id}`, {}, true);
+			await app.firebase.set(`votes/${$scope.table._entity.id}`, {}, true);
 			await $scope.table.getResults()
 		};
 		$scope.table.onEditConfig = ()=>{
@@ -147,8 +147,8 @@ script.
 			}
 		}
 		$scope.table.setPresence = ()=>{;
-			libx.modules.firebase.onPresent(`/table-presence/${$scope.table._entity.id}/${$rootScope.user.id}`, $rootScope.user.email);
-			libx.modules.firebase.listen(`/table-presence/${$scope.table._entity.id}`, data=>{
+			app.firebase.onPresent(`/table-presence/${$scope.table._entity.id}/${$rootScope.user.id}`, $rootScope.user.email);
+			app.firebase.listen(`/table-presence/${$scope.table._entity.id}`, data=>{
 				$scope.table.participants = data; //_.toPairs(data);
 				$scope.safeApply();
 			});
@@ -160,7 +160,7 @@ script.
 		$scope.myVote.vote = {};
 		$scope.myVote.get = ()=> {
 			var p = libx.newPromise();
-			libx.modules.firebase.listen(`votes/${$scope.table._entity.id}/${$rootScope.user.id}`, async (data)=>{
+			app.firebase.listen(`votes/${$scope.table._entity.id}/${$rootScope.user.id}`, async (data)=>{
 				libx.log.v('myVote:get: vote update! ', data)
 				$scope.myVote.vote = data || {};
 				
@@ -171,7 +171,7 @@ script.
 			return p;
 		};
 		$scope.myVote.save = libx.throttle(()=> {
-			libx.modules.firebase.set(`votes/${$scope.table._entity.id}/${$rootScope.user.id}`, $scope.myVote.vote, true);
+			app.firebase.set(`votes/${$scope.table._entity.id}/${$rootScope.user.id}`, $scope.myVote.vote, true);
 		}, 500);
 
 
@@ -206,7 +206,7 @@ script.
 
 		// Events:
 		$scope.onResetClick = async ()=> {
-			libx.browser.angular.showPrompt('Next item description: ', async (res)=> {
+			app.showPrompt('Next item description: ', async (res)=> {
 				if (res == null) return;
 				$scope.table.caption = res;
 				$scope.table.save();
@@ -249,6 +249,6 @@ script.
 
 		// Remove participant on exit table:
 		$rootScope.$on('$locationChangeStart', (event, next, current) => {
-			libx.modules.firebase.set(`/table-presence/${$scope.table._entity.id}/${$rootScope.user.id}`, null);			
+			app.firebase.set(`/table-presence/${$scope.table._entity.id}/${$rootScope.user.id}`, null);			
 		});
 	});

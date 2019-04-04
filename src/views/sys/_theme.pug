@@ -31,7 +31,7 @@ style.
 		window.test = ()=> libx.log.v('test!');
 
 script.
-	libx.browser.angular.lazy.controller('inlineController', function ($scope, $rootScope, $controller, $timeout) {
+	app.lazy.controller('inlineController', function ($scope, $rootScope, $controller, $timeout) {
 		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
 
 		$scope.range = _.range(1, 5);

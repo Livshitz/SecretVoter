@@ -11,12 +11,12 @@
 					div(layout="row")
 						div
 							div.small.bold {{ profile.displayName || user.email || user.id }}
-							a.place-right.small(ng-click="libx.browser.userManager.signOut()") logout
+							a.place-right.small(ng-click="app.userManager.signOut()") logout
 						.avatar.avatar-small
 							img(ng-src='https://avatars.dicebear.com/v2/jdenticon/{{user.email}}.svg')
 
 				div(ng-show="!user")
-					a(ng-click="libx.browser.userManager.signInGoogle()") login
+					a(ng-click="app.userManager.signInGoogle()") login
 
 
 		block content
