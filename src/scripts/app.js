@@ -1,5 +1,6 @@
 (async ()=>{ /* init */
 	if (window._libx_angular_boot != null) return;
+	window.prerenderReady = false;
 
 	window.global=window;
 	window.app = {};
