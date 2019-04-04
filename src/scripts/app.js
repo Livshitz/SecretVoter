@@ -3,7 +3,6 @@
 
 	window.global=window;
 	window.app = {};
-	window.prerenderReady = false;
 
 	window.bundular = libx.di.get('bundular');
 
