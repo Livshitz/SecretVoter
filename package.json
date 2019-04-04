@@ -14,7 +14,7 @@
     "connect-gzip": "^0.1.6",
     "firebase-admin": "^7.1.0",
     "ng-inline-edit": "^0.7.0",
-    "bundularjs": "^0.1.3",
+    "bundularjs": "^0.1.5",
     "libx.js": "^0.1.4"
   },
   "devDependencies": {}
