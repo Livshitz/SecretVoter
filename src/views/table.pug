@@ -67,7 +67,7 @@ style.
 		.md-button.md-raised(ng-click="onResetClick()").bg-red.margin5 Restart
 
 	.box-results.fill.margin-top40(ng-show="results")
-		div(layout="row").fill.border-bottom(style="border-bottom:1px solid #ddd;").margin-bottom5
+		div(layout="row",style="border-bottom:1px solid #ddd;").fill.border-bottom.margin-bottom5
 			div(flex=30) Results:
 			.vote-category(flex=10,ng-repeat="cat in table.categories").text-center {{ cat }}
 
