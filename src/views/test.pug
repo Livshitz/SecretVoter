@@ -3,6 +3,8 @@ style.
 
 .inlineController.content-page(ng-controller="inlineController", layout="column", layout-align="start start").padding10
 	
+	div {{ test }}
+
 	.md-button button
 
 	.my-button-bare button base
@@ -26,5 +28,8 @@ script.
 	app.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
 		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
 
-
+		$scope.test = await libx.di.get('firebase').get('/test/prerender');
+		app.layout.title = $scope.test;
+		$scope.safeApply()
+		
 	});

@@ -3,7 +3,7 @@ global.libx = require('libx.js/bundles/browser.essentials');
 if (global.projconfig != null) global.libx._projconfig = global.projconfig;
 if (global._ == null) global._ = libx._;
 
-libx.di.register('angular', require('libx.js/browser/angular'));
+libx.di.register('bundular', require('bundularjs'));
 
 // Setup log:
 libx.di.inject(log=>{
@@ -16,6 +16,7 @@ libx.di.inject(log=>{
 global.libx.modules.network = require('libx.js/modules/network');
 // global.libx.modules.crypto = require('libx.js/modules/crypto');
 // libx.di.register('callbacks', require('libx.js/modules/callbacks')); 
+// libx.di.register('rxjs', require('libx.js/modules/rxjs'));
 
 
 // Firebase and related modules instantiation:

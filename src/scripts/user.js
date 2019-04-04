@@ -12,7 +12,7 @@ app.run( ($rootScope, utils, $window) => {
 		libx.log.verbose('app:userManager:onDataChanged: ', data)
 		$rootScope.profile = data;
 		$rootScope.safeApply();
-		libx.angular.broadcast('user-ready');
+		bundular.broadcast('user-ready');
 	})
 	userManager.onSignIn.subscribe((x)=>{
 		libx.log.verbose('app:userManager:onSignIn: ', x)
@@ -26,7 +26,7 @@ app.run( ($rootScope, utils, $window) => {
 				eventLabel: 'id',
 				eventId: $rootScope.user.id,
 			});
-		libx.angular.broadcast('user-ready');
+		bundular.broadcast('user-ready');
 		$rootScope.safeApply();
 	})
 	userManager.onSignOut.subscribe(()=>{
@@ -43,7 +43,7 @@ app.run( ($rootScope, utils, $window) => {
 		});
 	}
 
-	libx.angular.on('user-ready', ()=> {
+	bundular.on('user-ready', ()=> {
 		app.firebase.isConnected(()=> {
 			var ref = app.firebase.getRef(`/presence/${$rootScope.user.id}`);
 			ref.onDisconnect().remove();
@@ -54,8 +54,8 @@ app.run( ($rootScope, utils, $window) => {
 	});
 
 	$rootScope.$on('$viewContentLoaded', function () {
-		if ($rootScope.user != null) libx.angular.broadcast('user-ready');
-		libx.angular.broadcast('view-changed');
+		if ($rootScope.user != null) bundular.broadcast('user-ready');
+		bundular.broadcast('view-changed');
 		if (window.ga) ga('send', 'pageview');
 	});
 

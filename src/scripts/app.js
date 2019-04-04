@@ -5,10 +5,10 @@
 	window.app = {};
 	window.prerenderReady = false;
 
-	libx.angular = libx.di.get('angular');
+	window.bundular = libx.di.get('bundular');
 
 	angular.module('templates', []);
-	app = angular.module('myApp', ['libx.angular', 'ngAnimate', 'ngMaterial', 'ngCookies', 'ngResource', 'ngRoute', 'templates']);
+	app = angular.module('myApp', ['bundular', 'ngAnimate', 'ngMaterial', 'ngCookies', 'ngResource', 'ngRoute', 'templates']);
 	// angular-google-analytics
 
 	app.api = {};
@@ -26,15 +26,22 @@
 
 	app.userManager = libx.di.get('userManager');
 
+	libx.di.inject(firebase=>{
+		firebase.onReady.subscribe(()=>{
+			window.prerenderReady = true;
+			console.log('!!! fib-ready')
+		})
+	});
+
 	app.config(()=> {
-		app.lazy = libx.angular.lazy;
+		app.lazy = bundular.lazy;
 	});
 
 	app.run( ($rootScope, utils, $window) => {
 		libx.log.debug('app:run')
 
 		app.firebase.isConnected(()=> {
-			libx.angular.broadcast('fib-ready');
+			bundular.broadcast('fib-ready');
 		});
 
 

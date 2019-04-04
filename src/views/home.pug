@@ -15,7 +15,7 @@ style.
 	//- .my-button-bare(ng-click="onDoneClick()").bg-green.margin5 Done!
 
 script.
-	libx.angular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
+	bundular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
 		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
 
 		//- var key = await app.firebase.push('/xplanner/tables', { tableName: tableName, owner: $rootScope.user.id });
@@ -31,11 +31,11 @@ script.
 		}
 
 		$scope.showPrompt = ()=> {
-			libx.angular.showPrompt('content', async (res)=> {
+			bundular.showPrompt('content', async (res)=> {
 				if (res == null) return;
 
 				var tableId = await $scope.createTable(res);
-				libx.angular.navigate(`/table/${tableId}`)
+				bundular.navigate(`/table/${tableId}`)
 			});
 		};
 
