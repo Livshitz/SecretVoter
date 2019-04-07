@@ -282,8 +282,10 @@ script.
 				$scope.table.getResults();
 			})
 		});
-		//- $rootScope.$on('user-ready', async ()=> {
-		//- });
+		
+		bundular.on('user-ready', async ()=> {
+			if ($rootScope.user == null) bundular.navigate('/')
+		});
 
 		$scope.$on('$destroy', function () {
 			libx.log.i("Unregistering listener");

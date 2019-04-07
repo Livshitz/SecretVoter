@@ -10,7 +10,8 @@ style.
 		md-button.md-raised.md-primary(ng-click="showPrompt()") New Table
 
 	div(ng-show="!user",layout="row",layout-align="center center").fill
-		h3 Please Login
+		h3 Please 
+			a(ng-click="userManager.signInGoogle()").big Login
 
 	//- .my-button-bare(ng-click="onDoneClick()").bg-green.margin5 Done!
 

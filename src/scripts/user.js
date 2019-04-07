@@ -33,6 +33,7 @@ app.run( ($rootScope, utils, $window) => {
 		libx.log.verbose('app:userManager:onSignOut: ')
 		$rootScope.user = null;
 		if (window.ga) ga('send', 'event', 'user', 'logout');
+		bundular.broadcast('user-ready');
 		$rootScope.safeApply();
 	})
 
