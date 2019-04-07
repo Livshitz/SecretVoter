@@ -44,7 +44,6 @@
 			bundular.broadcast('fib-ready');
 		});
 
-
 		// Load components ahead of time (otherwise, require them from the specific controller)
 		libx.browser.require('resources/components/my-loader/controller.js')
 		libx.browser.require('resources/components/my-widget/controller.js')

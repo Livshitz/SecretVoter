@@ -26,7 +26,7 @@ style.
 	br.margin20
 
 
-	.box-panels(layout="row",layout-align="space-between start").fill
+	.box-panels(layout-gt-xs="row",layout-align="space-between start").fill
 		.box-panels-left(flex)
 			.box-voting(layout="row",layout-align="space-between center",ng-class="{ 'locked' : !timer.isActive() }").fill.text-center
 				.vote-category(flex,ng-repeat="cat in table.categories") {{ cat }}
@@ -64,7 +64,7 @@ style.
 		//- .my-button-bare(ng-click="onDoneClick()").bg-green.margin5 Done!
 		.md-button.md-raised(ng-click="onStartClick()").bg-blue.margin5 Start
 		.md-button.md-raised(ng-click="onStopClick()").bg-orange.margin5 Stop
-		.md-button.md-raised(ng-click="onResetClick()").bg-red.margin5 Restart
+		.md-button.md-raised(ng-click="onResetClick()").bg-red.margin5 Next >>
 
 	.box-results.fill.margin-top40(ng-show="results")
 		div(layout="row",style="border-bottom:1px solid #ddd;").fill.border-bottom.margin-bottom5
@@ -76,7 +76,19 @@ style.
 			.vote-category(flex=10,ng-repeat="cat in table.categories") 
 				.vote-option.centered(layout="row",layout-align="center center") {{ res[cat] }}
 
+		div(layout="row",layout-align="start center",ng-show="table.summary").fill.margin-bottom5
+			div(flex=30).bold Summary
+			.vote-category(flex=10,ng-repeat="cat in table.categories") 
+				.vote-option.centered(layout="row",layout-align="center center") {{ table.summary[cat] }}
+
 	br.margin40
+
+
+	.box-items.fill.margin-top40
+		md-input-container.md-block.fill.hide-validation-error
+			label Items:
+			textarea(ng-model='items_str',rows='4',ng-model-options="{ debounce: 500 }",ng-change="onItemsChange(this, $event)",md-detect-hidden,ng-readonly="!table.isOwner()")
+
 
 	.box-settings(layout="row",layout-align="start start").fill.padding20.margin-top40
 		.btn-settings.btn-icon.fg-black.margin-right20(ng-click="isShowSettings = !isShowSettings") 
@@ -94,9 +106,11 @@ script.
 		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
 
 		// Table config:
+		$scope.items_str = '';
 		$scope.table = {};
 		$scope.table.owner = null;
 		$scope.table.tableName = null;
+		$scope.table.curItemIndex = 0;
 		$scope.table.caption = "";
 		$scope.table.timerMaxSec = 15;
 		$scope.table.endTime = null;
@@ -129,6 +143,10 @@ script.
 			var data = await app.firebase.get(`/votes/${$scope.table._entity.id}/`);
 			libx.log.v('table:getResults: ', data)
 			$scope.results = data;
+
+			$scope.table.summary = $scope.table.calcSummary();
+			$scope.items_str = $scope.table.items.join('\n');
+
 			$scope.safeApply();
 		};
 		$scope.table.resetVotes = async ()=>{
@@ -152,6 +170,26 @@ script.
 				$scope.table.participants = data; //_.toPairs(data);
 				$scope.safeApply();
 			});
+		}
+		$scope.table.calcSummary = ()=> {
+			if ($scope.results == null || _.keys($scope.results).length ==0) return null;
+
+			var sumPerCat = {}
+			_.each($scope.table.categories, i=> sumPerCat[i] = 0);
+
+			_.each($scope.results, userVote=> {
+				_.each(userVote, (val,cat)=> {
+					if (sumPerCat[cat] == null) sumPerCat[cat] = 0;
+					sumPerCat[cat] += val * 1; 
+				})
+			})
+
+			var n = _.keys($scope.results).length;
+			_.each(sumPerCat, (val,cat)=> {
+				sumPerCat[cat] = Math.ceil(sumPerCat[cat] / n);
+			})
+
+			return sumPerCat;
 		}
 
 
@@ -206,12 +244,13 @@ script.
 
 		// Events:
 		$scope.onResetClick = async ()=> {
-			app.showPrompt('Next item description: ', async (res)=> {
+			$scope.table.curItemIndex+=1;
+			bundular.showPrompt('Next item description: ', async (res)=> {
 				if (res == null) return;
 				$scope.table.caption = res;
 				$scope.table.save();
 				$scope.table.resetVotes();
-			}, { initialValue: $scope.table.caption });
+			}, { initialValue: $scope.table.items[$scope.table.curItemIndex] });
 		}
 		$scope.onStartClick = ()=> {
 			$scope.table.resetVotes();
@@ -225,6 +264,11 @@ script.
 			if (!$scope.timer.isActive()) return;
 			$scope.myVote.vote[cat] = opt;
 			$scope.myVote.save();
+		}
+		$scope.onItemsChange = ()=>{
+			//- if ($scope.items_str == null) return;
+			$scope.table.items = $scope.items_str.split('\n');
+			$scope.table.save();
 		}
 
 		// Init:

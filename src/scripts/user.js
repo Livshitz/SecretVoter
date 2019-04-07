@@ -59,4 +59,6 @@ app.run( ($rootScope, utils, $window) => {
 		if (window.ga) ga('send', 'pageview');
 	});
 
+	$rootScope.userManager = app.userManager;
+
 });
