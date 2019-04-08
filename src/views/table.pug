@@ -72,7 +72,7 @@ style.
 			.vote-category(flex=10,ng-repeat="cat in table.categories").text-center {{ cat }}
 
 		div(ng-repeat="(uid, res) in results",layout="row",layout-align="start center").fill.margin-bottom5
-			div(flex=30) {{ table.participants[uid] }}
+			div(flex=30) {{ table.participants[uid] || participants[uid] }}
 			.vote-category(flex=10,ng-repeat="cat in table.categories") 
 				.vote-option.centered(layout="row",layout-align="center center") {{ res[cat] }}
 
@@ -167,6 +167,7 @@ script.
 		$scope.table.setPresence = ()=>{;
 			app.firebase.onPresent(`/table-presence/${$scope.table._entity.id}/${$rootScope.user.id}`, $rootScope.user.email);
 			app.firebase.listen(`/table-presence/${$scope.table._entity.id}`, data=>{
+				$scope.participants = $scope.table.participants;
 				$scope.table.participants = data; //_.toPairs(data);
 				$scope.safeApply();
 			});
