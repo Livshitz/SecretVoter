@@ -282,9 +282,13 @@ script.
 				$scope.table.getResults();
 			})
 		});
-		
+
 		bundular.on('user-ready', async ()=> {
-			if ($rootScope.user == null) bundular.navigate('/')
+			if ($rootScope.user == null && $rootScope.lock != true) {
+				$rootScope.lock = true;
+				$rootScope.userManager.onSignIn.subscribe(bundular.reload);
+				$rootScope.userManager.signInGoogle(); //bundular.navigate('/')
+			}
 		});
 
 		$scope.$on('$destroy', function () {
