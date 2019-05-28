@@ -19,6 +19,8 @@ script.
 	bundular.lazy.controller('inlineController', async function ($scope, $rootScope, $controller, $mdDialog, $routeParams, $interval) {
 		angular.extend(this, $controller('inlineControllerBase', {$scope: $scope}));
 
+		console.log('---- view:1')
+
 		//- var key = await app.firebase.push('/xplanner/tables', { tableName: tableName, owner: $rootScope.user.id });
 
 		$scope.createTable = async (tableName)=>{
@@ -44,3 +46,5 @@ script.
 			$scope.getMyTables();
 		});
 	});
+
+	console.log('---- view:2')
